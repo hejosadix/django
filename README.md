@@ -32,4 +32,15 @@ python manage.py migrate
 # to create a super admin user
 python manage.py createsuperuser
 # run the app (inside the folder)
-pyton manage.py runserver
+python manage.py runserver
+# api url by normal runserver
+http://127.0.0.1:8000/api/api-json-products
+
+# Export database
+You can create like this put is preferable by command (python manage.py migrate) the migration files are inside the project.
+pg_dump -h localhost -U django_user -W -F t django > export.pgsql
+# Import database
+psql -h localhost -U django_user -W -F t django < export.pgsql <br/>
+python manage.py migrate --fake<br >
+python manage.py createsuperuser
+

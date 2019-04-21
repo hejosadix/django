@@ -8,7 +8,11 @@
 
     <div class="col-sm"></div>
 
-    <div class="col-sm"> <a class="btn btn-dark" href="{% url 'store:products_add' 0  %}"> add product</a></div>
+    <div class="col-sm"> 
+        {% if request.user.is_superuser %}
+            <a class="btn btn-dark" href="{% url 'store:products_add' 0  %}"> add product</a>
+        {% endif %}
+    </div>
 </div>
 <div class="row">
     <div class="col-sm"></div>
@@ -20,7 +24,6 @@
     <div class="col-sm">
         <form action="" method="GET" action="">
             <div class="input-group mb-3">
-
                 <input type="text" class="form-control" name="search" id="search" placeholder="Search Product"
                     aria-label="" aria-describedby="basic-addon2">
                 <div class="input-group-append">

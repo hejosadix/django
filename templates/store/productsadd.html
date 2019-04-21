@@ -1,6 +1,15 @@
 {% extends 'bases/base_store.html' %}
 {% block content%}
 <div class="row">
+    <div class="col-sm"></div>
+    <div class="col-sm"></div>
+    <div class="col-sm"></div>
+    <div class="col-sm"></div>
+    <div class="col-sm">
+        <a  href="{% url 'store:products'  %}" class="btn btn-dark"> < back to products</a>
+    </div>
+</div>
+<div class="row">
     <form method="post" action="">
         {% csrf_token %}
         <table>
