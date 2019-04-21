@@ -1,0 +1,36 @@
+<header class="navbar navbar-expand navbar-dark bg-dark bflex-column flex-md-row bd-navbar">
+    <a class="navbar-brand mr-0 mr-md-2" href="/" aria-label="Bootstrap">
+        MyTest
+    </a>
+    <div class="navbar-nav-scroll">
+        <ul class="navbar-nav bd-navbar-nav flex-row">
+            <li class="nav-item">
+
+                <a class="nav-link {% if  request.resolver_match.url_name == 'home' %} active {% endif %}"
+                    href="/">Home</a>
+            </li>
+
+    </div>
+    <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+
+        {% if user.is_authenticated %}
+        <li class="nav-item ">
+            <p class="badge-dark btn">Hi {{ user.username }}!</p>
+        </li>
+
+        <li class="nav-item">
+            <p><a class="btn btn-dark" href="{% url 'logout' %}">logout</a></p>
+        </li>
+        {% else %}
+        <li class="nav-item">
+            <a class="btn btn-dark" href="{% url 'login' %}">login</a>
+        </li>
+        {% endif %}
+
+    </ul>
+</header>
+{% if request.user.is_superuser %}
+{% include 'navs/admin_store_nav.html' %}
+{% endif %}
+<div class="conteiner-fuid">
+</div>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load staticfiles %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static "bootstrap/dist/css/bootstrap.min.css" %}">
+    <script src="{% static "jquery/dist/jquery.min.js" %}"></script>
+    <script src="{% static "bootstrap/dist/js/bootstrap.min.js" %}"></script>
+</head>
+
+<body>
+    {% include 'navs/main_nav_store.html' %}
+    <div class="container-fluid" style="padding-bottom:2em;padding-top:1em;">
+    {% include 'messages/store_messages.html' %}
+    </div>
+    <div class="container-fluid">
+        {% block content %}
+
+        {%endblock%}
+    </div>
+
+</body>
+
+</html>
