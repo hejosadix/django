@@ -1,0 +1,133 @@
+{% extends 'bases/base_store.html' %}
+{% load table %}
+{% block content%}
+<div class="row">
+    <div class="col-sm">
+    </div>
+    <div class="col-sm"></div>
+
+    <div class="col-sm"></div>
+
+    <div class="col-sm"> <a class="btn btn-dark" href="{% url 'store:products_add' 0  %}"> add product</a></div>
+</div>
+<div class="row">
+    <div class="col-sm"></div>
+
+    <div class="col-sm"></div>
+
+    <div class="col-sm"></div>
+
+    <div class="col-sm">
+        <form action="" method="GET" action="">
+            <div class="input-group mb-3">
+
+                <input type="text" class="form-control" name="search" id="search" placeholder="Search Product"
+                    aria-label="" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">search</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <form action="" method="GET">
+        <select class="form-control" onchange="this.form.submit()" name="sortby" id="sortby">
+            <option value="name" {% select_option request 'sortby' 'name' %}>name</option>
+            <option value="likes" {% select_option request 'sortby' 'likes' %}>likes</option>
+        </select>
+        <select class="form-control" onchange="this.form.submit()" name="dir" id="dir">
+            <option value="asc" {% select_option request 'dir' 'asc' %}>asc</option>
+            <option value="desc" {% select_option request 'dir' 'desc' %}>desc</option>
+        </select>
+        {% for key, value in request.GET.items %}
+        {% if key == 'search' %}
+        <input type="hidden" name="{{key}}" value="{{value}}">
+        {%endif%}
+
+        {% endfor %}
+    </form>
+    <table class="table table-bordered table-responsibe">
+        <thead class="thead-dark">
+            <tr>
+                <th>name </th>
+                <th>price </th>
+                <th> stock </th>
+                <th> </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>{{ product.price }}</td>
+                <td>{% get_stock product.id %}</td>
+                <td>
+                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                        <div class="btn-group " role="group" aria-label="First group">
+                            <form method="POST" action="">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" value="{{ product.id }}" />
+                                <button name="btnLikes" class="btn btn-success" name="like" type="submit">
+                                    like
+                                    <span class="badge badge-light">{{ product.likes }}</span>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="btn-group " role="group" aria-label="First group">
+                            <form method="POST" action="">
+                                {% csrf_token %}
+                                <div class="btn-toolbar " role="toolbar" aria-label="Toolbar with button groups">
+                                    <div class="btn-group " role="group" aria-label="First group">
+                                        <input type="hidden" name="id" value="{{ product.id }}" />
+                                        <input type="number" name="quantity" id="quantity" class="form-control">
+                                    </div>
+                                    <div class="btn-group " role="group" aria-label="First group">
+                                        <button name="btnAddtoBasket" class="btn btn-info" name="add_basket"
+                                            type="submit">
+                                            add to Basket
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        {% if request.user.is_superuser %}
+                        <div class="btn-group " role="group" aria-label="First group"></div>
+                        <a class="btn btn-warning" href="{% url 'store:products_add'  product.id   %}"> edit </a>
+                    </div>
+                    {% endif %}
+
+</div>
+</td>
+
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+{% if products.has_other_pages %}
+<ul class="pagination">
+    {% if products.has_previous %}
+    <li><a href="?{% url_replace request 'page' products.previous_page_number %}">&laquo;</a></li>
+    {% else %}
+    <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in products.paginator.page_range %}
+    {% if products.number == i %}
+    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+    {% else %}
+    <li><a href="?{% url_replace request 'page' i %}">{{ i }}</a></li>
+    {% endif %}
+    {% endfor %}
+    {% if products.has_next %}
+    <li><a href="?{% url_replace request 'page' products.next_page_number %}">&raquo;</a></li>
+    {% else %}
+    <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+</ul>
+{% endif %}
+</div>
+
+{% endblock %}

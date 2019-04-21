@@ -6,6 +6,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.urls import reverse
 from django.contrib.auth.decorators import permission_required,login_required,user_passes_test
+from django.db.models import Count, Case, When, IntegerField, FloatField, F, Sum
+from django.db.models.functions import Cast
 
 @user_passes_test(lambda u: u.is_superuser)
 def document_add(request, typeDoc, id):
@@ -132,3 +134,132 @@ def products_add(request, id):
         logDocuments = paginator.page(paginator.num_pages)
 
     return render(request, 'store/productsadd.html', {'form': form, 'logDocuments': logDocuments })
+def products(request):
+    product_list = None
+    if request.method == 'POST':
+        if 'btnLikes' in request.POST:
+            if request.user.is_authenticated:
+                __user =request.user
+                __strID = request.POST.get("id",'0')
+                __product = Products.objects.get(pk= int(__strID))
+                pl = ProductsLikes(user=__user, products = __product)
+                pl.save()
+            else:
+                messages.info(request, 'logging before you like any of our products')
+        if 'btnAddtoBasket' in request.POST:
+            if request.user.is_authenticated:
+                __user =request.user
+                __strID = request.POST.get("id",'0')
+                __product = Products.objects.get(pk= int(__strID))
+                __quantity =  request.POST.get("quantity",'0')
+                if not __quantity == "0":
+                    _tmpc = tempCar.objects.filter(user=__user, products = __product)
+                    if not _tmpc.exists():
+                        pl = tempCar(user=__user, products = __product, quantity = __quantity)
+                        pl.save()
+                    else:
+                        for t in _tmpc:
+                            t.quantity = t.quantity + float(__quantity)
+                            t.save()
+                else:
+                    messages.info(request, 'add quantity')
+
+            else:
+                messages.info(request, 'logging before add to basket')
+
+
+    #    product_list = Products.objects.filter(description__contains = __strFilter)
+    #else:
+    #    product_list = Products.objects.all()
+    __strFilter = request.GET.get('search', '')
+    __strsortby = request.GET.get('sortby', '')
+    __strdir = request.GET.get('dir', '')
+    product_list = Products.objects.annotate(likes = Count('productslikes')).filter(name__contains = __strFilter)
+    #product_list = product_list.annotate(stock = Sum(F("documentsdetails__quantity")))
+    #product_list = product_list
+    if __strsortby == 'name':
+        if __strdir == "desc":
+            __strsortby = "-" + __strsortby
+        product_list = Products.objects.annotate(likes = Count('productslikes')).filter(name__contains = __strFilter).order_by(__strsortby)
+    if __strsortby == 'likes':
+        if __strdir == "desc":
+            __strsortby = "-" + __strsortby
+
+        product_list = Products.objects.annotate(likes = Count('productslikes')).filter(name__contains = __strFilter).order_by(__strsortby)
+
+    page = request.GET.get('page', 1)
+ 
+    paginator = Paginator(product_list, 10)
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        products = paginator.page(1)
+    except EmptyPage:
+        products = paginator.page(paginator.num_pages)
+
+    return render(request, 'store/products.html', { 'products': products })
+
+@login_required
+def my_basket(request):
+    __user = request.user
+    __strFilter = request.GET.get('search', '')
+    __strsortby = request.GET.get('sortby', '')
+    __strdir = request.GET.get('dir', '')
+    if request.method == 'POST':
+        if 'btnLikes' in request.POST:
+            __strID = request.POST.get("id",'0')
+            __product = Products.objects.get(pk= int(__strID))
+            pl = ProductsLikes(user=__user, products = __product)
+            pl.save()
+        elif 'btnDelete' in request.POST:
+            __strID = request.POST.get("id",'0')
+            tmpc = tempCar.objects.get(pk = int(__strID))
+            tmpc.delete()
+        elif 'btnProcessCar' in request.POST:
+            doc = Documents(user = __user, description = "online sell", type = 'out', subType = "sell" )
+            doc.save()
+            tcs =  tempCar.objects.filter(user = __user)
+            for tc in tcs:
+                dd = DocumentsDetails()
+                dd.type = "out"
+                dd.price = tc.products.price
+                dd.quantity = tc.quantity
+                dd.documents = doc
+                dd.user = request.user
+                dd.products = tc.products
+                dd.save()
+
+            tmpc = tempCar.objects.filter(user = __user)
+            for t in tmpc:
+                tt = tempCar.objects.get(pk = t.pk)
+                tt.delete()
+
+
+
+    car_list = tempCar.objects.annotate(likes = Count('products__productslikes'), cost = Cast(F('quantity') * F('products__price'), FloatField())).filter(user= __user, products__name__contains = __strFilter)
+
+    if __strsortby == 'name':
+        __strsortby = 'products__name'
+        if __strdir == "desc":
+            __strsortby = "-" + __strsortby
+        car_list = tempCar.objects.annotate(likes = Count('products__productslikes'), cost = Cast(F('quantity') * F('products__price'), FloatField())).filter(user= __user,products__name__contains = __strFilter).order_by(__strsortby)
+    if __strsortby == 'likes':
+        if __strdir == "desc":
+            __strsortby = "-" + __strsortby
+
+        car_list = tempCar.objects.annotate(likes = Count('products__productslikes'), cost = Cast(F('quantity') * F('products__price'), FloatField())).filter(user= __user, products__name__contains = __strFilter).order_by(__strsortby)
+
+
+    page = request.GET.get('page', 1)
+    total = car_list.aggregate(Sum('cost'))['cost__sum']
+    if total is None:
+        total = 0.0
+    paginator = Paginator(car_list, 10)
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        products = paginator.page(1)
+    except EmptyPage:
+        products = paginator.page(paginator.num_pages)
+
+    return render(request, 'store/mybasket.html', { 'products': products , 'total': total })

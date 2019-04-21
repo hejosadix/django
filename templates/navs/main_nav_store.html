@@ -1,3 +1,4 @@
+{% load basket %}
 <header class="navbar navbar-expand navbar-dark bg-dark bflex-column flex-md-row bd-navbar">
     <a class="navbar-brand mr-0 mr-md-2" href="/" aria-label="Bootstrap">
         MyTest
@@ -9,8 +10,25 @@
                 <a class="nav-link {% if  request.resolver_match.url_name == 'home' %} active {% endif %}"
                     href="/">Home</a>
             </li>
+            
+            <li class="nav-item dropdown  {% if  request.resolver_match.url_name == 'products' %} active {% endif %}">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    Products
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item  {% if  request.resolver_match.url_name == 'products' %} active {% endif %}"
+                        href="{% url 'store:products'  %}">All</a>
+                </div>
+            </li>
     </div>
     <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+        <li class="nav-item {% if  request.resolver_match.url_name == 'my_basket' %} active {% endif %} ">
+            <a href="{% url 'store:my_basket'  %}" class="nav-link">My Basket
+                <span class="badge badge-light">{% basket_count request %}</span>
+            </a>
+
+        </li>
 
         {% if user.is_authenticated %}
         <li class="nav-item ">

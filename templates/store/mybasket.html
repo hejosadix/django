@@ -1,0 +1,136 @@
+{% extends 'bases/base_store.html' %}
+{% load table %}
+{% block content%}
+<div class="row">
+    <div class="col-sm">
+        {% for key, value in request.GET.items %}
+        &{{key}}={{value}}
+        {% endfor %}
+    </div>
+    <div class="col-sm"></div>
+
+    <div class="col-sm"></div>
+
+    <div class="col-sm"></div>
+</div>
+<div class="row">
+    <div class="col-sm"></div>
+    <div class="col-sm"></div>
+
+    <div class="col-sm"></div>
+
+    <div class="col-sm">
+        <form action="" method="GET" action="">
+            <div class="input-group mb-3">
+
+                <input type="text" class="form-control" name="search" id="search" placeholder="Search Product"
+                    aria-label="" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">search</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <form action="" method="GET">
+        <select class="form-control" onchange="this.form.submit()" name="sortby" id="sortby">
+            <option value="name" {% select_option request 'sortby' 'name' %}>name</option>
+            <option value="likes" {% select_option request 'sortby' 'likes' %}>likes</option>
+        </select>
+        <select class="form-control" onchange="this.form.submit()" name="dir" id="dir">
+            <option value="asc" {% select_option request 'dir' 'asc' %}>asc</option>
+            <option value="desc" {% select_option request 'dir' 'desc' %}>desc</option>
+        </select>
+        {% for key, value in request.GET.items %}
+        {% if key == 'search' %}
+        <input type="hidden" name="{{key}}" value="{{value}}">
+        {%endif%}
+
+        {% endfor %}
+    </form>
+    <table class="table table-bordered table-responsibe">
+        <thead class="thead-dark">
+            <tr>
+                <th>name </th>
+                <th>price </th>
+                <th>quantity </th>
+                <th>total </th>
+                <th>like </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.products.name }}</td>
+                <td>{{ product.products.price }}</td>
+                <td>{{ product.quantity }}</td>
+                <td>$ {{ product.cost }}</td>
+                <td>
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value="{{ product.products.id }}" />
+                        <button name="btnLikes" class="btn btn-success" name="like" type="submit">
+                            like
+                            <span class="badge badge-light">{{ product.likes }}</span>
+                        </button>
+                    </form>
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value="{{ product.id }}" />
+                        <button name="btnDelete" class="btn btn-danger" name="like" type="submit">
+                            delete
+
+                        </button>
+                    </form>
+                </td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if products.has_other_pages %}
+    <ul class="pagination">
+        {% if products.has_previous %}
+        <li><a href="?{% url_replace request 'page' products.previous_page_number %}">&laquo;</a></li>
+        {% else %}
+        <li class="disabled"><span>&laquo;</span></li>
+        {% endif %}
+        {% for i in products.paginator.page_range %}
+        {% if products.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+        {% else %}
+        <li><a href="?{% url_replace request 'page' i %}">{{ i }}</a></li>
+        {% endif %}
+        {% endfor %}
+        {% if products.has_next %}
+        <li><a href="?{% url_replace request 'page' products.next_page_number %}">&raquo;</a></li>
+        {% else %}
+        <li class="disabled"><span>&raquo;</span></li>
+        {% endif %}
+    </ul>
+    {% endif %}
+</div>
+
+<div class="row">
+    <div class="col-sm"></div>
+    <div class="col-sm"></div>
+    <div class="col-sm"></div>
+
+    <div class="col-sm"></div>
+    <div class="col-sm">
+       Total: $ {{ total }}
+    </div>
+    <div class="col-sm">
+        <form action="" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn form-control btn-success" name="btnProcessCar">
+                buy
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}
