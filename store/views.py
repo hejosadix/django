@@ -152,6 +152,9 @@ def products(request):
                 __strID = request.POST.get("id",'0')
                 __product = Products.objects.get(pk= int(__strID))
                 __quantity =  request.POST.get("quantity",'0')
+                #print("quantity: "+__quantity)
+                if __quantity.strip() == "":
+                    __quantity = "0"
                 if not __quantity == "0":
                     _tmpc = tempCar.objects.filter(user=__user, products = __product)
                     if not _tmpc.exists():
@@ -216,26 +219,27 @@ def my_basket(request):
             tmpc = tempCar.objects.get(pk = int(__strID))
             tmpc.delete()
         elif 'btnProcessCar' in request.POST:
-            doc = Documents(user = __user, description = "online sell", type = 'out', subType = "sell" )
-            doc.save()
             tcs =  tempCar.objects.filter(user = __user)
-            for tc in tcs:
-                dd = DocumentsDetails()
-                dd.type = "out"
-                dd.price = tc.products.price
-                dd.quantity = tc.quantity
-                dd.documents = doc
-                dd.user = request.user
-                dd.products = tc.products
-                dd.save()
-
-            tmpc = tempCar.objects.filter(user = __user)
-            for t in tmpc:
-                tt = tempCar.objects.get(pk = t.pk)
-                tt.delete()
-
-
-
+            if tcs.exists():
+                doc = Documents(user = __user, description = "online sell", type = 'out', subType = "sell" )
+                doc.save()
+                for tc in tcs:
+                    dd = DocumentsDetails()
+                    dd.type = "out"
+                    dd.price = tc.products.price
+                    dd.quantity = tc.quantity
+                    dd.documents = doc
+                    dd.user = request.user
+                    dd.products = tc.products
+                    dd.save()
+                tmpc = tempCar.objects.filter(user = __user)
+                for t in tmpc:
+                    tt = tempCar.objects.get(pk = t.pk)
+                    tt.delete()
+                messages.success(request, 'Thanks for you purchase :)')
+            else:
+                messages.info(request, 'add products to your basket firt')
+                
     car_list = tempCar.objects.annotate(likes = Count('products__productslikes'), cost = Cast(F('quantity') * F('products__price'), FloatField())).filter(user= __user, products__name__contains = __strFilter)
 
     if __strsortby == 'name':
