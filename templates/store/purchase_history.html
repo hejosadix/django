@@ -1,0 +1,55 @@
+
+{% extends 'bases/base_store.html' %}
+{% block content%}
+<div class="row">
+  <div class="col-sm"></div>
+  <div class="col-sm">
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+          <tr>
+            <th>description</th>
+            <th>price</th>
+            <th>quantity</th>
+        
+            <th>date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for documentd in documentsd %}
+            <tr>
+              <td>{{ documentd.products.name }}</td>
+              <td>{{ documentd.price }}</td>
+              <td>{{ documentd.quantity }}</td>
+             
+              <td>{{ documentd.created_at }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      
+      {% if documentsd.has_other_pages %}
+        <ul class="pagination">
+          {% if documentsd.has_previous %}
+            <li><a href="?page={{ documentsd.previous_page_number }}">&laquo;</a></li>
+          {% else %}
+            <li class="disabled"><span>&laquo;</span></li>
+          {% endif %}
+          {% for i in documentsd.paginator.page_range %}
+            {% if documentsd.number == i %}
+              <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+            {% else %}
+              <li><a href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+          {% endfor %}
+          {% if documentsd.has_next %}
+            <li><a href="?page={{ documents.next_page_number }}">&raquo;</a></li>
+          {% else %}
+            <li class="disabled"><span>&raquo;</span></li>
+          {% endif %}
+        </ul>
+      {% endif %}
+      </div>
+      <div class="col-sm"></div>
+</div>
+
+{%endblock%}

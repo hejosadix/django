@@ -8,6 +8,6 @@ urlpatterns = [
     path(r'product-add/<int:id>/', views.products_add,name='products_add'),
     path(r'products', views.products, name='products'),
     path(r'my-basket', views.my_basket, name='my_basket'),
-    
+    path(r'purchase-history', views.purchase_history, name='purchase_history'),
 ]
 

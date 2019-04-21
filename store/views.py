@@ -263,3 +263,16 @@ def my_basket(request):
         products = paginator.page(paginator.num_pages)
 
     return render(request, 'store/mybasket.html', { 'products': products , 'total': total })
+
+@login_required
+def purchase_history(request):
+    documentd_list = DocumentsDetails.objects.filter(user = request.user, type="out")
+    page = request.GET.get('page', 1)
+    paginator = Paginator(documentd_list, 10)
+    try:
+        documentsd = paginator.page(page)
+    except PageNotAnInteger:
+        documentsd = paginator.page(1)
+    except EmptyPage:
+        documentsd = paginator.page(paginator.num_pages)
+    return render(request, 'store/purchase_history.html', { "documentsd": documentsd})
