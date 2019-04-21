@@ -9,7 +9,6 @@
                 <a class="nav-link {% if  request.resolver_match.url_name == 'home' %} active {% endif %}"
                     href="/">Home</a>
             </li>
-
     </div>
     <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
 
@@ -26,7 +25,6 @@
             <a class="btn btn-dark" href="{% url 'login' %}">login</a>
         </li>
         {% endif %}
-
     </ul>
 </header>
 {% if request.user.is_superuser %}

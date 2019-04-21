@@ -1,6 +1,10 @@
 from django.contrib import admin
-from django.urls import path, include
-from django.conf.urls import url
-from django.views.generic.base import TemplateView
+from django.urls import path, include , re_path
+from store import views
 app_name = 'store'
-urlpatterns = []
+urlpatterns = [
+    path('document-<typeDoc>-add/<int:id>/', views.document_add,name='document_add'),
+    path(r'document-<typeDoc>', views.document,name='document'),
+    path(r'product-add/<int:id>/', views.products_add,name='products_add'),
+]
+

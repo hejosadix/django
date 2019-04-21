@@ -4,8 +4,9 @@ from django.contrib.auth.models import User
 class Products(models.Model):
     name = models.CharField(max_length=2000, blank= True, null=True)
     price = models.FloatField(blank= True, null= True)
+
     class Meta:
-        ordering = ['-id']
+        ordering= ['-id']
 class ProductsLikes(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete= models.PROTECT)
@@ -17,7 +18,8 @@ class Documents(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete= models.PROTECT)
-    
+    class Meta:
+        ordering = ['-id']
 class DocumentsDetails(models.Model):
     type = models.CharField(max_length=40, blank= True, null=True)
     price = models.FloatField(blank= True, null= True)
@@ -27,6 +29,8 @@ class DocumentsDetails(models.Model):
     products = models.ForeignKey(Products, on_delete= models.PROTECT)
     documents = models.ForeignKey(Documents, on_delete= models.PROTECT)
     user = models.ForeignKey(User, on_delete= models.PROTECT)
+    class Meta:
+        ordering = ['-id']
 
 class LogsPriceChange(models.Model):
     name = models.CharField(max_length=2000, blank= True, null=True)
@@ -34,11 +38,14 @@ class LogsPriceChange(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete= models.PROTECT)
     products = models.ForeignKey(Products, on_delete= models.PROTECT)
-
+    class Meta:
+        ordering = ['-id']
 class tempCar(models.Model):
     quantity =  models.FloatField(blank= True, null= True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     products = models.ForeignKey(Products, on_delete= models.PROTECT)
     user = models.ForeignKey(User, on_delete= models.PROTECT)
+    class Meta:
+        ordering = ['-id']
 

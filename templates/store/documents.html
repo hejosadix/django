@@ -1,0 +1,61 @@
+{% extends 'bases/base_store.html' %}
+{% block content%}
+<div class="row">
+</div>
+<div class="row">
+  <div class="col-sm"></div>
+  <div class="col-sm"></div>
+
+  <div class="col-sm"></div>
+  <div class="col-sm"> <a class="btn btn-dark" href="{% url 'store:document_add' request.resolver_match.kwargs.typeDoc 0 %}"> new document</a></div>
+</div>
+<div class="row">
+  <table class="table table-bordered table-responsibe">
+    <thead class="thead-dark">
+      <tr>
+        <th>description</th>
+        <th>Type</th>
+        <th>subType</th>
+        <th>Date created</th>
+        <th>options</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for document in documents %}
+      <tr>
+        <td>{{ document.description }}</td>
+        <td>{{ document.type }}</td>
+        <td>{{ document.subType }}</td>
+        <td>{{ document.created_at }}</td>
+        <td> <a href="{% url 'store:document_add' request.resolver_match.kwargs.typeDoc document.pk %}"
+            class="btn btn-warning"> edit</a> </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if documents.has_other_pages %}
+  <ul class="pagination">
+    {% if documents.has_previous %}
+    <li><a href="?page={{ documents.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+    <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in documents.paginator.page_range %}
+    {% if documents.number == i %}
+    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+    {% else %}
+    <li><a href="?page={{ i }}">{{ i }}</a></li>
+    {% endif %}
+    {% endfor %}
+    {% if documents.has_next %}
+    <li><a href="?page={{ documents.next_page_number }}">&raquo;</a></li>
+    {% else %}
+    <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+  {% endif %}
+</div>
+
+
+{% endblock %}

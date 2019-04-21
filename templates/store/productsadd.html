@@ -1,0 +1,67 @@
+{% extends 'bases/base_store.html' %}
+{% block content%}
+<div class="row">
+    <form method="post" action="">
+        {% csrf_token %}
+        <table>
+            {{ form }}
+        </table>
+        <input type="submit" class="btn btn-dark" 
+        value="{% if request.resolver_match.kwargs.id == 0 %} add {% else %} update {% endif %} product" />
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm"></div>
+    <div class="col-sm">
+    <table class="table table-bordered table-responsibe">
+        <thead class="thead-dark">
+            <tr>
+                <th colspan="4">
+                    <h5 class="text-center">Product History</h5>
+                </th>
+
+            </tr>
+            <tr>
+                <th>name</th>
+                <th>price</th>
+                <th>user</th>
+                <th>date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logDocuments %}
+            <tr>
+                <td>{{ log.name }}</td>
+                <td>{{ log.price }}</td>
+                <td>{{ log.user.username }}</td>
+                <td>{{ log.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if logDocuments.has_other_pages %}
+    <ul class="pagination">
+        {% if logDocuments.has_previous %}
+        <li><a href="?page={{ logDocuments.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+        <li class="disabled"><span>&laquo;</span></li>
+        {% endif %}
+        {% for i in logDocuments.paginator.page_range %}
+        {% if logDocuments.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+        {% else %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+        {% endfor %}
+        {% if logDocuments.has_next %}
+        <li><a href="?page={{ logDocuments.next_page_number }}">&raquo;</a></li>
+        {% else %}
+        <li class="disabled"><span>&raquo;</span></li>
+        {% endif %}
+    </ul>
+    {% endif %}
+    </div>
+    <div class="col-sm"></div>
+</div>
+{% endblock %}
