@@ -1,37 +1,41 @@
 <nav class="navbar navbar-expand navbar-dark bg-secondary bflex-column flex-md-row bd-navbar">
-    <div class="navbar-nav-scroll">
-        <ul class="navbar-nav bd-navbar-nav flex-row">
-            <li class="nav-item">
-                <a class="nav-link {% if  request.resolver_match.url_name == 'home' %} active {% endif %}"
-                    href="/">admin</a>
-            </li>
-            <li class="nav-item dropdown  {% if  request.resolver_match.url_name == 'document' %} active {% endif %}">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
-                    Document In
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item  {% if  request.resolver_match.url_name == 'document' %} active {% endif %}"
-                        href="{% url 'store:document' 'in' %}">All</a>
-                    <a class="dropdown-item {% if  request.resolver_match.url_name == 'document_add' %} active {% endif %}"
-                        href="{% url 'store:document_add' 'in' 0 %}">New</a>
-                </div>
-            </li>
-            <li class="nav-item dropdown  {% if  request.resolver_match.url_name == 'document' %} active {% endif %}">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
-                    Document Out
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item  {% if  request.resolver_match.url_name == 'document' %} active {% endif %}"
-                        href="{% url 'store:document' 'out' %}">All</a>
-                    <a class="dropdown-item {% if  request.resolver_match.url_name == 'document_add' %} active {% endif %}"
-                        href="{% url 'store:document_add' 'out' 0 %}">New</a>
-                </div>
-            </li>
-            <li class="nav-item ">
-                <a class="nav-link  {% if  request.resolver_match.url_name == 'products_add' %} active {% endif %}" href="{% url 'store:products_add' 0 %}"> add products</a>
-            </li>
-        </ul>
-    </div>
-</nav>
+
+        <div class="navbar-nav-scroll">
+            <ul class="navbar-nav bd-navbar-nav flex-row">
+                <li class="nav-item">
+    
+                    <a class="nav-link {% if  request.resolver_match.url_name == 'home' %} active {% endif %}"
+                        href="/">admin</a>
+                </li>
+    
+                <li class="nav-item dropdown  {% if  request.resolver_match.url_name == 'document' %} active {% endif %}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        Document In
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item  {% if  request.resolver_match.url_name == 'document' %} active {% endif %}"
+                            href="{% url 'store:document' 'in' %}">All</a>
+                        <a class="dropdown-item {% if  request.resolver_match.url_name == 'document_add' %} active {% endif %}"
+                            href="{% url 'store:document_add' 'in' 0 %}">New</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown  {% if  request.resolver_match.url_name == 'document' %} active {% endif %}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        Document Out
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item  {% if  request.resolver_match.url_name == 'document' %} active {% endif %}"
+                            href="{% url 'store:document' 'out' %}">All</a>
+                        <a class="dropdown-item {% if  request.resolver_match.url_name == 'document_add' %} active {% endif %}"
+                            href="{% url 'store:document_add' 'out' 0 %}">New</a>
+                    </div>
+                </li>
+            
+                <li class="nav-item ">
+                    <a class="nav-link  {% if  request.resolver_match.url_name == 'products_add' %} active {% endif %}" href="{% url 'store:products_add' 0 %}"> add products</a>
+                </li>
+            </ul>
+        </div>
+    </nav>

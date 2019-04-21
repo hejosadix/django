@@ -10,31 +10,33 @@
                 <a class="nav-link {% if  request.resolver_match.url_name == 'home' %} active {% endif %}"
                     href="/">Home</a>
             </li>
-
             <li class="nav-item dropdown  {% if  request.resolver_match.url_name == 'products' %} active {% endif %}">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
-                    Products
+                    Store
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item  {% if  request.resolver_match.url_name == 'products' %} active {% endif %}"
-                        href="{% url 'store:products'  %}">All</a>
+                        href="{% url 'store:products'  %}">Products</a>
                 </div>
             </li>
+            <li class="nav-item ">
+                <a class="nav-link  {% if  request.resolver_match.url_name == 'stock' %} active {% endif %}" href="{% url 'store:stock'  %}"> stock </a>
+            </li>
+
+        </ul>
     </div>
     <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
-        <li class="nav-item {% if  request.resolver_match.url_name == 'purchase_history' %} active {% endif %} ">
-            <a href="{% url 'store:purchase_history'  %}" class="nav-link">purchase history
-
-            </a>
-
-        </li>
-        <li class="nav-item {% if  request.resolver_match.url_name == 'my_basket' %} active {% endif %} ">
-            <a href="{% url 'store:my_basket'  %}" class="nav-link">My Basket
-                <span class="badge badge-light">{% basket_count request %}</span>
-            </a>
-
-        </li>
+            <li class="nav-item {% if  request.resolver_match.url_name == 'purchase_history' %} active {% endif %} ">
+                    <a href="{% url 'store:purchase_history'  %}" class="nav-link">purchase history   
+                    </a>
+            </li>
+            <li class="nav-item {% if  request.resolver_match.url_name == 'my_basket' %} active {% endif %} ">
+                <a href="{% url 'store:my_basket'  %}" class="nav-link">My Basket
+                        <span class="badge badge-light">{% basket_count request %}</span>
+                </a>
+                 
+            </li>
 
         {% if user.is_authenticated %}
         <li class="nav-item ">
@@ -49,6 +51,7 @@
             <a class="btn btn-dark" href="{% url 'login' %}">login</a>
         </li>
         {% endif %}
+
     </ul>
 </header>
 {% if request.user.is_superuser %}

@@ -6,8 +6,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.urls import reverse
 from django.contrib.auth.decorators import permission_required,login_required,user_passes_test
-from django.db.models import Count, Case, When, IntegerField, FloatField, F, Sum
-from django.db.models.functions import Cast
+from django.db.models import Count, Case, When, IntegerField, FloatField, F, Sum, DecimalField, Subquery, OuterRef 
+from django.db.models.functions import Cast, Coalesce
 
 @user_passes_test(lambda u: u.is_superuser)
 def document_add(request, typeDoc, id):
@@ -276,3 +276,48 @@ def purchase_history(request):
     except EmptyPage:
         documentsd = paginator.page(paginator.num_pages)
     return render(request, 'store/purchase_history.html', { "documentsd": documentsd})
+def stock(request):
+    product_list = None
+    __strFilter = request.GET.get('search', '')
+    __strsortby = request.GET.get('sortby', '')
+    __strdir = request.GET.get('dir', '')
+    product_list = Products.objects.filter(name__contains = __strFilter)
+    product_list = product_list.annotate(
+    stock_in_sum = Sum(Case(When(documentsdetails__type='in', then=F('documentsdetails__quantity')), output_field=DecimalField(), default=0)),
+    stock_out_sum = Sum(Case(When(documentsdetails__type='out', then=F('documentsdetails__quantity')), output_field=DecimalField(), default=0))
+    ).annotate(stock = F('stock_in_sum') - F('stock_out_sum'))
+    _likes = ProductsLikes.objects.filter(products=OuterRef('pk')).values('products').annotate(count=Count('pk')).values('count')
+    product_list = product_list.annotate(likes = Coalesce(Subquery(_likes),0)).filter(stock__gt = 0)
+    if __strsortby == 'name':
+        if __strdir == "desc":
+            __strsortby = "-" + __strsortby
+        product_list = Products.objects.filter(name__contains = __strFilter).order_by(__strsortby)
+        product_list = product_list.annotate(
+        stock_in_sum = Sum(Case(When(documentsdetails__type='in', then=F('documentsdetails__quantity')), output_field=DecimalField(), default=0)),
+        stock_out_sum = Sum(Case(When(documentsdetails__type='out', then=F('documentsdetails__quantity')), output_field=DecimalField(), default=0))
+        ).annotate(stock = F('stock_in_sum') - F('stock_out_sum'))
+    _likes = ProductsLikes.objects.filter(products=OuterRef('pk')).values('products').annotate(count=Count('pk')).values('count')
+    product_list = product_list.annotate(likes = Coalesce(Subquery(_likes),0)).filter(stock__gt = 0)
+    if __strsortby == 'likes':
+        if __strdir == "desc":
+            __strsortby = "-" + __strsortby
+
+        product_list = Products.objects.filter(name__contains = __strFilter).order_by(__strsortby)
+        product_list = product_list.annotate(
+        stock_in_sum = Sum(Case(When(documentsdetails__type='in', then=F('documentsdetails__quantity')), output_field=DecimalField(), default=0)),
+        stock_out_sum = Sum(Case(When(documentsdetails__type='out', then=F('documentsdetails__quantity')), output_field=DecimalField(), default=0))
+        ).annotate(stock = F('stock_in_sum') - F('stock_out_sum'))
+        _likes = ProductsLikes.objects.filter(products=OuterRef('pk')).values('products').annotate(count=Count('pk')).values('count')
+        product_list = product_list.annotate(likes = Coalesce(Subquery(_likes),0)).filter(stock__gt = 0)
+
+    page = request.GET.get('page', 1)
+ 
+    paginator = Paginator(product_list, 10)
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        products = paginator.page(1)
+    except EmptyPage:
+        products = paginator.page(paginator.num_pages)
+
+    return render(request, 'store/stock.html', { 'products': products })
