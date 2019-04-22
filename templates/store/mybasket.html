@@ -62,10 +62,15 @@
         </thead>
         <tbody>
             {% for product in products %}
+            {% get_stock product.products.id as stock %}
             <tr>
                 <td>{{ product.products.name }}</td>
                 <td>{{ product.products.price }}</td>
-                <td>{{ product.quantity }}</td>
+                <td>{{ product.quantity }}
+                    {% if  product.quantity > stock %}
+                        <p class="text-warning">out of stock</p>
+                    {%endif%}
+                </td>
                 <td>$ {{ product.cost }}</td>
                 <td>
                     <form method="POST" action="">
@@ -121,7 +126,7 @@
 
     <div class="col-sm"></div>
     <div class="col-sm">
-       Total: $ {{ total }}
+        Total: $ {{ total }}
     </div>
     <div class="col-sm">
         <form action="" method="post">

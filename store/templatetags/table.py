@@ -30,4 +30,4 @@ def get_stock(id):
             decRes = dd.filter(type='out').aggregate(Sum('quantity'))['quantity__sum']
         r = float(decSum) - float(decRes)
 
-    return str(r) 
+    return float(r) 

@@ -62,10 +62,16 @@
         </thead>
         <tbody>
             {% for product in products %}
+            {% get_stock product.id as stock %}
             <tr>
                 <td>{{ product.name }}</td>
                 <td>{{ product.price }}</td>
-                <td>{% get_stock product.id %}</td>
+                <td>{% if stock  > 0 %}
+                        {{stock}}
+                    {% else %}
+                        <div class="p-3 mb-2 bg-warning text-dark">out of stock</div>
+                    {%endif%}
+                </td>
                 <td>
                     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                         <div class="btn-group " role="group" aria-label="First group">
