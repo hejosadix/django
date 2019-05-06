@@ -12,8 +12,6 @@ virtualenv test -p python3
 source ~/test/bin/activate
 # (test) inside the virtual env
 pip install django
-
-
 # install postgres in ubuntu
 sudo apt-get update <br/>
 sudo apt-get install python3-pip python3-dev libpq-dev postgresql postgresql-contrib
@@ -25,7 +23,8 @@ ALTER ROLE django_user SET client_encoding TO 'utf8'; <br/>
 ALTER ROLE django_user SET default_transaction_isolation TO 'read committed';<br/>
 ALTER ROLE django_user SET timezone TO 'UTC'; <br/>
 GRANT ALL PRIVILEGES ON DATABASE django TO django_user;
-
+# (test) install postgres in python
+pip install psycopg2
 # to create tables 
 python manage.py makemigrations <br/>
 python manage.py migrate
